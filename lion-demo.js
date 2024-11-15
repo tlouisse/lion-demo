@@ -15,28 +15,62 @@ export class LionDemo extends LitElement {
   constructor() {
     super();
     this.fields = [{ name: "input_1" }, { name: "input_2" }];
-    this.errorMessageInConsole = '';
+    
+    this.buttonStates = {
+      inBetween: {
+        clicked: false,
+        message:''
+      },
+      toTheEnd: {
+        addToTheEndClicked:false,
+        message:''
+      } 
+    };
   }
 
-  handleInterLeaveInputField() {
-    console.log("Asdf", this.fields);
-    this.fields.splice(1, 0, { name: "input_1.1" });
+  handleAddInputFieldInBetween() {
+    this.interleaveFieldsArray(1, { name: "input_1.1" })
+    
+    //just to make it easy - hard coding the message logged in console
+    this.buttonStates.inBetween= {
+      clicked: true,
+      message: '❌ : Uncaught TypeError: Name "input_2" is already registered - if you want an array add [] to the end'
+    },
 
-    //just to make it easy - hard coding the message in console
-    this.errorMessageInConsole = 'Uncaught TypeError: Name "input_2" is already registered - if you want an array add [] to the end'
     this.requestUpdate();
+  }
+
+  handleAddInputFieldToTheEnd() {
+    this.interleaveFieldsArray(this.fields.length+1, { name: "input_3" })
+
+    //just to make it easy - hard coding the message logged in console
+    this.buttonStates.toTheEnd= {
+      clicked: true,
+      message: '✓ : No Error when adding to the end'
+    },
+    this.requestUpdate();
+  }
+
+  interleaveFieldsArray(position, fieldObj){
+    this.fields.splice(position, 0, fieldObj);
   }
 
   render() {
     return html`
       <h1> Look at the console log after clicking the button </h1>
+      <div>${JSON.stringify(this.fields)}</div>
+      <br>
       <lion-form>
         <form>
           ${this.fields.map(({ name }) => html`<lion-input label="${name}" name=${name}>asdf</lion-input>`)}
-          <lion-button slot="invoker" @click=${this.handleInterLeaveInputField}>Add Question 1.1</lion-button>
-
-          <br><br><br>
-            <span style="color:red">${this.errorMessageInConsole}</span>
+          <br>
+          <lion-button slot="invoker" ?disabled=${this.buttonStates.inBetween.clicked} @click=${this.handleAddInputFieldInBetween}>Add Question 1.1</lion-button>
+          <br>
+          <div style="color:red">${this.buttonStates.inBetween.message}</div>
+          <br>
+          <lion-button slot="invoker" ?disabled=${this.buttonStates.toTheEnd.clicked} @click=${this.handleAddInputFieldToTheEnd}>Add Question 3</lion-button>
+          <div style="color:green">${this.buttonStates.toTheEnd.message}</div>
+          
         </form>
       </lion-form>
     `;
