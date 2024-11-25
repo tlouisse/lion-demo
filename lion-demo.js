@@ -1,5 +1,7 @@
 import { html, LitElement } from 'lit';
 
+import { repeat } from 'lit/directives/repeat.js'
+
 // As a side-effect this way of importing defines the custom elements, eg. <lion-button>, ready for use
 import '@lion/ui/define/lion-button.js';
 import '@lion/ui/define/lion-input.js';
@@ -32,10 +34,10 @@ export class LionDemo extends LitElement {
     this.interleaveFieldsArray(1, { name: "input_1.1" })
     
     //just to make it easy - hard coding the message logged in console
-    this.buttonStates.inBetween= {
-      clicked: true,
-      message: '❌ : Uncaught TypeError: Name "input_2" is already registered - if you want an array add [] to the end'
-    },
+    // this.buttonStates.inBetween= {
+    //   clicked: true,
+    //   message: '❌ : Uncaught TypeError: Name "input_2" is already registered - if you want an array add [] to the end'
+    // },
 
     this.requestUpdate();
   }
@@ -62,7 +64,7 @@ export class LionDemo extends LitElement {
       <br>
       <lion-form>
         <form>
-          ${this.fields.map(({ name }) => html`<lion-input label="${name}" name=${name}>asdf</lion-input>`)}
+          ${repeat(this.fields, ({name}) => name, (({ name }) => html`<lion-input label="${name}" name=${name}>asdf</lion-input>`))}
           <br>
           <lion-button slot="invoker" ?disabled=${this.buttonStates.inBetween.clicked} @click=${this.handleAddInputFieldInBetween}>Add Question 1.1</lion-button>
           <br>
